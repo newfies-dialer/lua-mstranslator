@@ -8,8 +8,8 @@ Lua MSTranslator
 :Contributors: `list of contributors <https://github.com/newfies-dialer/lua-mstranslator/graphs/contributors>`_
 :License: MIT
 
-.. image:: https://img.shields.io/travis/newfies-dialer/lua-mstranslator.svg
-        :target: https://travis-ci.org/newfies-dialer/lua-mstranslator
+.. image:: https://travis-ci.org/newfies-dialer/lua-mstranslator.svg?branch=master
+    :target: https://travis-ci.org/newfies-dialer/lua-mstranslator
 
 
 
