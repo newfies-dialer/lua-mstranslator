@@ -84,8 +84,6 @@ Further information about Newfies-Dialer can be found at http://www.newfies-dial
 
 This module is built and supported by Star2Billing : http://www.star2billing.com
 
-Similar library in Python : http://github.com/newfies-dialer/python-mstranslator
-
 
 Source download
 ---------------
@@ -93,6 +91,37 @@ Source download
 The source code is currently available on github. Fork away!
 
 http://github.com/newfies-dialer/lua-mstranslator
+
+
+API Methods
+-----------
+
+Microsoft Translator API Reference](http://msdn.microsoft.com/en-us/library/ff512404.aspx)
+
+  * addTranslation (not implemented)
+  * addTranslationArray (not implemented)
+  * breakSentences (not working)
+  * detect (not implemented)
+  * detectArray (not implemented)
+  * getAppIdToken (not implemented) This is a legacy, replaced by
+    Access Token
+  * getLanguageNames (not implemented)
+  * getLanguagesForSpeak (not implemented)
+  * getLanguagesForTranslate (not implemented)
+  * getTranslations (not implemented)
+  * getTranslationsArray (not implemented)
+  * speak: implemented
+  * translate (not implemented)
+  * translateArray (not implemented)
+  * translateArray2 (not implemented)
+
+
+Other libraries
+---------------
+
+* Javascript: https://github.com/nanek/mstranslator
+* Python: https://pypi.python.org/pypi/mstranslator
+* Python: https://github.com/bebound/Python-Microsoft-Translate-API
 
 
 .. _Microsoft Translate: http://www.microsoft.com/en-us/translator/translatorapi.aspx
