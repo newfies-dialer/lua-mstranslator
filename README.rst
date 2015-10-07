@@ -16,9 +16,13 @@ Lua MSTranslator
 Lua Microsoft Translate Wrapper
 -------------------------------
 
-lua-mstranslator is a library to produce a text-to-speech file using `Microsoft Translate`_ web services.
+lua-mstranslator is a library to produce a text-to-speech file using
+`Microsoft Translate`_ web services.
 
-In order to utilize this service you must sign up for Microsoft Translator service and register an application. More information on creating a Microsoft account is located at the `getting started with Microsoft Translator API`_ page.
+In order to utilize this service you must sign up for Microsoft Translator
+service and register an application. More information on creating a Microsoft
+account is located at the `getting started with Microsoft Translator API`_
+page.
 
 
 Quickstart
@@ -28,15 +32,12 @@ Quickstart
 
     MSTranslator = require "mstranslator"
 
-    CLIENT_ID = 'XXXXXXXXXXXX'
-    CLIENT_SECRET = 'YYYYYYYYYYYYYY'
-    SERVICE_URL = 'http://api.microsofttranslator.com/V2/Http.svc/Speak'
+    client_id = 'XXXXXXXXXXXX'
+    client_secret = 'YYYYYYYYYYYYYY'
+    service_url = 'http://api.microsofttranslator.com/V2/Http.svc/Speak'
 
-    tts_mstranslator = MSTranslator:new(CLIENT_ID, CLIENT_SECRET, SERVICE_URL, directory)
-
-    TEXT = "This is a test of the Microsoft Translate text to speech service."
-    LANG = 'EN'
-    tts_mstranslator:prepare(TEXT, LANG)
+    tts_mstranslator = MSTranslator:new(client_id, client_secret, service_url, directory)
+    tts_mstranslator:prepare("This is a test message", "en")
     output_filename = tts_mstranslator:run()
 
     print("Recorded TTS = "..output_filename)
@@ -79,10 +80,12 @@ http://github.com/newfies-dialer/lua-mstranslator/issues
 Extra information
 -----------------
 
-Newfies-Dialer, an Open Source Voice BroadCasting Solution, uses this module to synthetize audio files being play to the end-user.
-Further information about Newfies-Dialer can be found at http://www.newfies-dialer.org
+Newfies-Dialer, an Open Source Voice BroadCasting Solution, uses this module
+to synthetize audio files being play to the end-user. Further information
+about Newfies-Dialer can be found at http://www.newfies-dialer.org
 
-This module is built and supported by Star2Billing : http://www.star2billing.com
+This module is built and supported by Star2Billing:
+http://www.star2billing.com
 
 
 Source download

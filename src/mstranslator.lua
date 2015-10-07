@@ -118,11 +118,10 @@ end
 
 local MSTranslator = {
     -- default field values
-    CLIENT_ID = 'XXXXXXXXXXXX',
-    CLIENT_SECRET = 'YYYYYYYYYYYYYY',
+    client_id = 'XXXXXXXXXXXX',
+    client_secret = 'YYYYYYYYYYYYYY',
 
-    SERVICE_URL = 'http://api.microsofttranslator.com/V2/Http.svc/Speak',
-    LANGUAGE = 'en',
+    service_url = 'http://api.microsofttranslator.com/V2/Http.svc/Speak',
     DIRECTORY = '/tmp/',
 
     -- Properties
@@ -178,7 +177,7 @@ function MSTranslator:run()
         return self.DIRECTORY..self.filename
     else
         -- Generate Authorization Token
-        token = ms_token_gen(self.CLIENT_ID, self.CLIENT_SECRET)
+        token = ms_token_gen(self.client_id, self.client_secret)
         -- Build Authorization Header
         auth_header = "Authorization: Bearer "..token
         -- Get all the Get params and encode them
@@ -190,8 +189,8 @@ function MSTranslator:run()
             get_params = get_params..tostring(k)..'='..url_encode(v)
         end
 
-        -- print("===HTTP=== HEADER:"..auth_header.."\nCALL:"..self.SERVICE_URL..'?'..get_params, self.DIRECTORY..self.filename)
-        ms_wget(self.SERVICE_URL..'?'..get_params, auth_header, self.DIRECTORY..self.filename)
+        -- print("===HTTP=== HEADER:"..auth_header.."\nCALL:"..self.service_url..'?'..get_params, self.DIRECTORY..self.filename)
+        ms_wget(self.service_url..'?'..get_params, auth_header, self.DIRECTORY..self.filename)
 
         if file_exists(self.DIRECTORY..self.filename) then
             return self.DIRECTORY..self.filename
