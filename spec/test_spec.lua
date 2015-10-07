@@ -1,6 +1,6 @@
 -- test_spec.lua
-expose("exposed test for lua-mstranslator", function()
-    require("lua-mstranslator")
+expose("exposed test for mstranslator", function()
+    require("mstranslator")
 
     -- tests can go here
 

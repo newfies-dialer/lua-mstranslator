@@ -55,17 +55,17 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `lua-mstranslator` for local development.
+Ready to contribute? Here's how to set up `mstranslator` for local development.
 
-1. Fork the `lua-mstranslator` repo on GitHub.
+1. Fork the `mstranslator` repo on GitHub.
 2. Clone your fork locally::
 
-    $ git clone git@github.com:your_name_here/lua-mstranslator.git
+    $ git clone git@github.com:your_name_here/mstranslator.git
 
 3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
 
-    $ mkvirtualenv lua-mstranslator
-    $ cd lua-mstranslator/
+    $ mkvirtualenv mstranslator
+    $ cd mstranslator/
     $ python setup.py develop
 
 4. Create a branch for local development::

@@ -1,8 +1,8 @@
-package = "lua-mstranslator"
+package = "mstranslator"
 version = "0.1.0-1"
 source = {
   url = "https://github.com/newfies-dialer/lua-mstranslator/archive/v0.1.0.tar.gz",
-  dir = "lua-mstranslator-0.1.0-1"
+  dir = "mstranslator-0.1.0-1"
 }
 description = {
   summary = "Lua MSTranslator",
@@ -18,6 +18,6 @@ dependencies = {
 build = {
   type = "builtin",
    modules = {
-    lua-mstranslator = "src/lua-mstranslator.lua"
+    mstranslator = "src/mstranslator.lua"
   }
 }

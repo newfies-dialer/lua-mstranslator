@@ -1,5 +1,5 @@
 --
--- lua-mstranslator-0.1.0
+-- mstranslator-0.1.0
 --
 -- The MIT License (MIT)
 --
@@ -28,19 +28,19 @@ local PKG_EMAIL = 'areski@gmail.com'
 local PKG_VERSION = '0.1.0-1'
 
 
-local lua-mstranslator = {
+local mstranslator = {
     _VERSION = '0.1.0-1',
 }
 
 
-function lua-mstranslator:new (o)
+function mstranslator:new (o)
     o = o or {}   -- create object if user does not provide one
     setmetatable(o, self)
     self.__index = self
     return o
 end
 
-function lua-mstranslator:method(text)
+function mstranslator:method(text)
     -- docstring
     if string.len(text) == 0 then
         return false
@@ -48,4 +48,4 @@ function lua-mstranslator:method(text)
     return true
 end
 
-return lua-mstranslator
+return mstranslator

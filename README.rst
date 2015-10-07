@@ -4,7 +4,7 @@ Lua MSTranslator
 
 :Author: Areski Belaid
 :Description: Microsoft Translator API Helper for Lua
-:Documentation: RTD https://lua-mstranslator.readthedocs.org
+:Documentation: https://github.com/newfies-dialer/lua-mstranslator
 :Contributors: `list of contributors <https://github.com/newfies-dialer/lua-mstranslator/graphs/contributors>`_
 :License: MIT
 
