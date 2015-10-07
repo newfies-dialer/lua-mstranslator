@@ -16,7 +16,7 @@ Lua MSTranslator
 Lua Microsoft Translate Wrapper
 -------------------------------
 
-lua-mstranslate is a library to produce a text-to-speech file using `Microsoft Translate`_ web services.
+lua-mstranslator is a library to produce a text-to-speech file using `Microsoft Translate`_ web services.
 
 In order to utilize this service you must sign up for Microsoft Translator service and register an application. More information on creating a Microsoft account is located at the `getting started with Microsoft Translator API`_ page.
 
@@ -26,18 +26,18 @@ Quickstart
 
 ::
 
-    MSTranslate = require "mstranslate"
+    MSTranslator = require "mstranslator"
 
     CLIENT_ID = 'XXXXXXXXXXXX'
     CLIENT_SECRET = 'YYYYYYYYYYYYYY'
     SERVICE_URL = 'http://api.microsofttranslator.com/V2/Http.svc/Speak'
 
-    tts_mstranslate = MSTranslate:new(CLIENT_ID, CLIENT_SECRET, SERVICE_URL, directory)
+    tts_mstranslator = MSTranslator:new(CLIENT_ID, CLIENT_SECRET, SERVICE_URL, directory)
 
     TEXT = "This is a test of the Microsoft Translate text to speech service."
     LANG = 'EN'
-    tts_mstranslate:prepare(TEXT, LANG)
-    output_filename = tts_mstranslate:run()
+    tts_mstranslator:prepare(TEXT, LANG)
+    output_filename = tts_mstranslator:run()
 
     print("Recorded TTS = "..output_filename)
 
@@ -73,7 +73,7 @@ Feedback
 
 Feedback are more than welcome, post bugs and feature requests on github:
 
-http://github.com/newfies-dialer/lua-mstranslate/issues
+http://github.com/newfies-dialer/lua-mstranslator/issues
 
 
 Extra information
@@ -84,7 +84,7 @@ Further information about Newfies-Dialer can be found at http://www.newfies-dial
 
 This module is built and supported by Star2Billing : http://www.star2billing.com
 
-Similar library in Python : http://github.com/newfies-dialer/python-mstranslate
+Similar library in Python : http://github.com/newfies-dialer/python-mstranslator
 
 
 Source download
@@ -92,7 +92,7 @@ Source download
 
 The source code is currently available on github. Fork away!
 
-http://github.com/newfies-dialer/lua-mstranslate
+http://github.com/newfies-dialer/lua-mstranslator
 
 
 .. _Microsoft Translate: http://www.microsoft.com/en-us/translator/translatorapi.aspx
