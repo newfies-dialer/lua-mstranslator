@@ -14,10 +14,15 @@ before_install:
 install:
   - sudo apt-get update -qq
   - sudo luarocks install luasec
+  - sudo luarocks install md5 1.2-1
+  - sudo luarocks install luafilesystem
+  - sudo luarocks install Lua-cURL         --server=https://luarocks.org/dev
+  - sudo luarocks install luacov-coveralls --server=https://luarocks.org/dev
   - git clone git://github.com/Olivine-Labs/busted.git
   - cd busted
   - sudo luarocks make busted-scm-0.rockspec
   - cd ../
+
 
 script: "busted spec"
 
