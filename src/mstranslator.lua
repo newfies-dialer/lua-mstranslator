@@ -24,7 +24,7 @@
 
 local md5 = require "md5"
 require "lfs"
-require "cURL"
+local cURL = require "cURL"
 
 
 -- Check file exists and readable
