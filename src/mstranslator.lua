@@ -23,8 +23,8 @@
 -- SOFTWARE.
 
 local md5 = require "md5"
-require "lfs"
 local cURL = require "cURL"
+require "lfs"
 
 
 -- Check file exists and readable
