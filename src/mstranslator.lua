@@ -23,7 +23,7 @@
 -- SOFTWARE.
 
 local md5 = require "md5"
-local cURL = require "cURL"
+local http = require("http.request")
 require "lfs"
 
 
@@ -38,26 +38,28 @@ function file_exists(path)
 end
 
 --
--- Get an url and save result to file
+-- Get url and return binary result
 --
-function ms_wget(url, auth_header, outputfile)
-    -- open output file
-    f = io.open(outputfile, "w")
-    local text = {}
-    local function writecallback(str)
-        f:write(str)
-        return string.len(str)
+function ms_wget(postheaders, setbody, outputfile)
+    local posturl = "https://speech.platform.bing.com/synthesize"
+    local request = http.new_from_uri(posturl)
+    for k,v in pairs(postheaders) do
+        request.headers:upsert(k, v)
     end
-    local c = cURL.easy_init()
-    -- setup url
-    c:setopt_url(url)
-    -- Set auth header
-    c:setopt_httpheader({auth_header})
-    -- perform, invokes callbacks
-    c:perform({writefunction = writecallback})
-    -- close output file
+    request.headers:upsert(":method", "POST")
+    request:set_body(setbody)
+    local headers, stream = request:go(10)
+    if headers:get(":status") ~= "200" then
+        print("Error: " .. headers:get(":status"))
+        print(stream:get_body_as_string()..'\n')
+        return nil
+    end
+
+    -- open output file
+    f = assert(io.open(outputfile, 'w'))
+    f:write(stream:get_body_as_string())
     f:close()
-    return table.concat(text,'')
+    return true
 end
 
 --
@@ -74,42 +76,20 @@ function url_encode(str)
 end
 
 --
--- Token Generator for MS Translate API
+-- Token Generator for Azure Cognitive API
 --
-function ms_token_gen(clientID, clientSecret)
-        local json = require "json"
-        local authUrl = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13/"
-        local params = {
-                scope = "http://api.microsofttranslator.com",
-                grant_type = "client_credentials",
-                client_id = clientID,
-                client_secret = clientSecret
-        }
-        local get_params = ''
-        -- URLEncode the parameters
-        for k, v in pairs(params) do
-            if get_params ~= '' then
-                get_params = get_params..'&'
-            end
-            get_params = get_params..tostring(k)..'='..url_encode(v)
-        end
-        local c = cURL.easy_init()
-        c:setopt_url(authUrl)
-        -- We have to post
-        c:setopt_post(1)
-        c:setopt_postfields(get_params)
-        -- Avoid any SSL heartburn
-        c:setopt_ssl_verifypeer(0)
-        -- Pipe the return response to a function that fills 'buffer' variable
-        c:perform({writefunction = function(str)
-                                         buffer = str
-                                   end})
-        -- Turn the JSON response string into a table
-        jdata = json.decode(buffer)
-        -- Return the access token field
-        return jdata["access_token"]
+function ms_token_gen(subscription_key, auth_url)
+    local request = http.new_from_uri(auth_url)
+    request.headers:upsert("Ocp-Apim-Subscription-Key", subscription_key)
+    request.headers:upsert(":method", "POST")
+    local headers, stream = request:go(10)
+    if headers:get(":status") ~= "200" then
+        print("Error: " .. headers:get(":status"))
+        print(stream:get_body_as_string()..'\n')
+        return nil
+    end
+    return stream:get_body_as_string()
 end
-
 
 
 --
@@ -118,12 +98,10 @@ end
 
 local MSTranslator = {
     -- default field values
-    client_id = 'XXXXXXXXXXXX',
-    client_secret = 'YYYYYYYYYYYYYY',
-
-    service_url = 'http://api.microsofttranslator.com/V2/Http.svc/Speak',
+    subscription_key = 'XXXXXXXXXXXX',
+    -- service_url = 'http://api.microsofttranslator.com/V2/Http.svc/Speak',
+    auth_url = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken",
     DIRECTORY = '/tmp/',
-
     -- Properties
     filename = nil,
     cache = true,
@@ -132,9 +110,9 @@ local MSTranslator = {
 }
 
 -- Meta information
-MSTranslator._COPYRIGHT   = "Copyright (C) 2015 Arezqui Belaid and Joshua Patten"
-MSTranslator._DESCRIPTION = "Lua wrapper for text-to-speech synthesis with Microsoft Translate"
-MSTranslator._VERSION     = "lua-mstranslator 0.1.0"
+MSTranslator._COPYRIGHT   = "Copyright (C) 2015-2017 Arezqui Belaid and Joshua Patten"
+MSTranslator._DESCRIPTION = "Lua wrapper for text-to-speech synthesis with Microsoft Bing Speech"
+MSTranslator._VERSION     = "lua-mstranslator 0.2.0"
 
 
 function MSTranslator:new (o)
@@ -144,23 +122,63 @@ function MSTranslator:new (o)
     return o
 end
 
-function MSTranslator:prepare(textstr, lang)
+function MSTranslator:prepare(textstr, lang, gender, format)
     -- Prepare Microsoft Translate TTS
+    lang = lang or "en-US"
+    gender = gender or "female"
+    format = format or "riff-8khz-8bit-mono-mulaw"
     if string.len(textstr) == 0 then
         return false
     end
-    lang = string.lower(lang)
-    concatkey = textstr..'-'..lang
+    concatkey = textstr..'-'..lang..'-'..gender..'-'..format
     hash = md5.sumhexa(concatkey)
 
     key = 'mstranslator'..'_'..hash
     self.filename = key..'-'..lang..'.wav'
 
+    namemap = {
+        ["ar-EG,Female"] = "Microsoft Server Speech Text to Speech Voice (ar-EG, Hoda)",
+        ["de-DE,Female"] = "Microsoft Server Speech Text to Speech Voice (de-DE, Hedda)",
+        ["de-DE,Male"] = "Microsoft Server Speech Text to Speech Voice (de-DE, Stefan, Apollo)",
+        ["en-AU,Female"] = "Microsoft Server Speech Text to Speech Voice (en-AU, Catherine)",
+        ["en-CA,Female"] = "Microsoft Server Speech Text to Speech Voice (en-CA, Linda)",
+        ["en-GB,Female"] = "Microsoft Server Speech Text to Speech Voice (en-GB, Susan, Apollo)",
+        ["en-GB,Male"] = "Microsoft Server Speech Text to Speech Voice (en-GB, George, Apollo)",
+        ["en-IN,Male"] = "Microsoft Server Speech Text to Speech Voice (en-IN, Ravi, Apollo)",
+        ["en-US,Male"] = "Microsoft Server Speech Text to Speech Voice (en-US, BenjaminRUS)",
+        ["en-US,Female"] = "Microsoft Server Speech Text to Speech Voice (en-US, ZiraRUS)",
+        ["es-ES,Female"] = "Microsoft Server Speech Text to Speech Voice (es-ES, Laura, Apollo)",
+        ["es-ES,Male"] = "Microsoft Server Speech Text to Speech Voice (es-ES, Pablo, Apollo)",
+        ["es-MX,Male"] = "Microsoft Server Speech Text to Speech Voice (es-MX, Raul, Apollo)",
+        ["fr-CA,Female"] = "Microsoft Server Speech Text to Speech Voice (fr-CA, Caroline)",
+        ["fr-FR,Female"] = "Microsoft Server Speech Text to Speech Voice (fr-FR, Julie, Apollo)",
+        ["fr-FR,Male"] = "Microsoft Server Speech Text to Speech Voice (fr-FR, Paul, Apollo)",
+        ["it-IT,Male"] = "Microsoft Server Speech Text to Speech Voice (it-IT, Cosimo, Apollo)",
+        ["ja-JP,Female"] = "Microsoft Server Speech Text to Speech Voice (ja-JP, Ayumi, Apollo)",
+        ["ja-JP,Male"] = "Microsoft Server Speech Text to Speech Voice (ja-JP, Ichiro, Apollo)",
+        ["pt-BR,Male"] = "Microsoft Server Speech Text to Speech Voice (pt-BR, Daniel, Apollo)",
+        ["ru-RU,Female"] = "Microsoft Server Speech Text to Speech Voice (ru-RU, Irina, Apollo)",
+        ["ru-RU,Male"] = "Microsoft Server Speech Text to Speech Voice (ru-RU, Pavel, Apollo)",
+        ["zh-CN,Female"] = "Microsoft Server Speech Text to Speech Voice (zh-CN, HuihuiRUS)",
+        ["zh-CN,Male"] = "Microsoft Server Speech Text to Speech Voice (zh-CN, Kangkang, Apollo)",
+        ["zh-HK,Male"] = "Microsoft Server Speech Text to Speech Voice (zh-HK, Danny, Apollo)",
+        ["zh-TW,Female"] = "Microsoft Server Speech Text to Speech Voice (zh-TW, Yating, Apollo)",
+        ["zh-TW,Male"] = "Microsoft Server Speech Text to Speech Voice (zh-TW, Zhiwei, Apollo)"
+    }
+    -- Capitalize first letter
+    gender = gender:sub(1,1):upper()..gender:sub(2)
+    langmap = lang .. ',' .. gender
+    if namemap[langmap] == nil then
+        return false
+    end
+    servicename = namemap[langmap]
     self.data = {
-        language = lang,
-        format = 'audio/wav',
-        options = 'MinSize',
-        text = textstr,
+        -- ["client_secret"] = client_secret,
+        ["language"] = lang,
+        ["format"] = format,
+        ["gender"] = gender,
+        ["text"] = textstr,
+        ["service"] = servicename
     }
 end
 
@@ -170,27 +188,26 @@ function MSTranslator:set_cache(value)
 end
 
 function MSTranslator:run()
-    -- Run will call Microsoft Translate API and reproduce audio
+    -- Run will call Bing TTS API and reproduce audio
 
     -- Check if file exists
     if self.cache and file_exists(self.DIRECTORY..self.filename) then
         return self.DIRECTORY..self.filename
     else
         -- Generate Authorization Token
-        token = ms_token_gen(self.client_id, self.client_secret)
-        -- Build Authorization Header
-        auth_header = "Authorization: Bearer "..token
-        -- Get all the Get params and encode them
-        get_params = ''
-        for k, v in pairs(self.data) do
-            if get_params ~= '' then
-                get_params = get_params..'&'
-            end
-            get_params = get_params..tostring(k)..'='..url_encode(v)
+        token = ms_token_gen(self.subscription_key, self.auth_url)
+        if token == nil then
+            print('Token error.\n')
+            return False
         end
 
-        -- print("===HTTP=== HEADER:"..auth_header.."\nCALL:"..self.service_url..'?'..get_params, self.DIRECTORY..self.filename)
-        ms_wget(self.service_url..'?'..get_params, auth_header, self.DIRECTORY..self.filename)
+        -- Build Authorization Headers
+        headertable = {["Content-type"] = "application/ssml+xml",
+                       ["Authorization"] = "Bearer "..token,
+                       ["X-Microsoft-OutputFormat"] = self.data["format"],
+                       }
+        postbody = "<speak version='1.0' xml:lang='"..self.data["language"].."'><voice xml:lang='"..self.data["language"].."' xml:gender='"..self.data["gender"].."' name='"..self.data["service"].."'>"..self.data["text"].."</voice></speak>"
+        ms_wget(headertable, postbody, self.DIRECTORY..self.filename)
 
         if file_exists(self.DIRECTORY..self.filename) then
             return self.DIRECTORY..self.filename

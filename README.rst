@@ -3,7 +3,7 @@ Lua MSTranslator
 ================
 
 :Author: Arezqui Belaid and Joshua Patten
-:Description: Microsoft Translator API Helper for Lua
+:Description: Bing Speech API Helper for Lua
 :Documentation: https://github.com/newfies-dialer/lua-mstranslator
 :Contributors: `list of contributors <https://github.com/newfies-dialer/lua-mstranslator/graphs/contributors>`_
 :License: MIT
@@ -13,17 +13,15 @@ Lua MSTranslator
 
 
 
-Lua Microsoft Translate Wrapper
+Lua Bing Speech Wrapper
 -------------------------------
 
-lua-mstranslator is a library to produce a text-to-speech file using
-`Microsoft Translate`_ web services.
+lua-mstranslator is a library to synthesize text into human sounding speech
+using `Microsoft Cognitive Services`_.
 
-In order to utilize this service you must sign up for Microsoft Translator
+In order to utilize this service you must sign up for Microsoft Cognitive
 service and register an application. More information on creating a Microsoft
-account is located at the `getting started with Microsoft Translator API`_
-page.
-
+account is located at the `getting started with Text to Speech`_ page.
 
 Quickstart
 ----------
@@ -32,41 +30,40 @@ Quickstart
 
     MSTranslator = require "mstranslator"
 
-    client_id = 'XXXXXXXXXXXX'
-    client_secret = 'YYYYYYYYYYYYYY'
-    service_url = 'http://api.microsofttranslator.com/V2/Http.svc/Speak'
-
-    tts_mstranslator = MSTranslator:new(client_id, client_secret, service_url, directory)
-    tts_mstranslator:prepare("This is a test message", "en")
+    subscription_key = 'XXXXXXXXXXXX'
+    directory = '/tmp/'
+    tts_mstranslator = MSTranslator:new(subscription_key, directory)
+    tts_mstranslator:prepare("This is a test message", "en-US", "female", "riff-8khz-8bit-mono-mulaw")
     output_filename = tts_mstranslator:run()
 
     print("Recorded TTS = "..output_filename)
 
 
-Features
---------
+Test with French and Spanish.
 
-* Produce text to speech in different languages
+::
+
+    MSTranslator = require "mstranslator"
+
+    subscription_key = 'XXXXXXXXXXXX'
+    directory = '/tmp/'
+    tts_mstranslator = MSTranslator:new(subscription_key, directory)
+    tts_mstranslator:prepare("Bonjour, Je sais parler Francais, mais aussi Anglais et Espagnol", "fr-FR", "female")
+    -- or
+    -- tts_mstranslator:prepare("Hola, como estas encanto te gustaría un paseo?", 'es-ES')
+    output_filename = tts_mstranslator:run()
+
+    print("Recorded TTS = "..output_filename)
+
 
 Dependencies
 ------------
 
-There are a few dependencies: md5, lfs and lua-curl.
-We use this version of lua curl : http://msva.github.com/lua-curl/
-
-To install md5 and lfs::
+There are a few dependencies: md5, lfs and lua-http.
 
     luarocks install md5
     luarocks install luafilesystem
-
-
-To install lua-curl::
-
-    cd /usr/src/
-    wget https://github.com/msva/lua-curl/archive/master.zip -O lua-curl.zip
-    unzip lua-curl.zip
-    cd lua-curl-master
-    cmake . && make install
+    luarocks install http
 
 
 Feedback
@@ -82,10 +79,9 @@ Extra information
 
 Newfies-Dialer, an Open Source Voice BroadCasting Solution, uses this module
 to synthetize audio files being play to the end-user. Further information
-about Newfies-Dialer can be found at http://www.newfies-dialer.org
+about Newfies-Dialer can be found at https://www.newfies-dialer.org
 
-This module is built and supported by Star2Billing:
-http://www.star2billing.com
+This module is built and supported by Star2Billing: https://www.star2billing.com
 
 
 Source download
@@ -96,29 +92,6 @@ The source code is currently available on github. Fork away!
 http://github.com/newfies-dialer/lua-mstranslator
 
 
-API Methods
------------
-
-Microsoft Translator API Reference](http://msdn.microsoft.com/en-us/library/ff512404.aspx)
-
-  * addTranslation (not implemented)
-  * addTranslationArray (not implemented)
-  * breakSentences (not working)
-  * detect (not implemented)
-  * detectArray (not implemented)
-  * getAppIdToken (not implemented) This is a legacy, replaced by
-    Access Token
-  * getLanguageNames (not implemented)
-  * getLanguagesForSpeak (not implemented)
-  * getLanguagesForTranslate (not implemented)
-  * getTranslations (not implemented)
-  * getTranslationsArray (not implemented)
-  * speak: implemented
-  * translate (not implemented)
-  * translateArray (not implemented)
-  * translateArray2 (not implemented)
-
-
 Other libraries
 ---------------
 
@@ -126,6 +99,8 @@ Other libraries
 * Python: https://pypi.python.org/pypi/mstranslator
 * Python: https://github.com/bebound/Python-Microsoft-Translate-API
 
+* Check also Lua-Bing-TTS: https://github.com/westparkcom/Lua-Bing-TTS
 
-.. _Microsoft Translate: http://www.microsoft.com/en-us/translator/translatorapi.aspx
-.. _getting started with Microsoft Translator API: https://www.microsoft.com/en-us/translator/getstarted.aspx
+
+.. _Microsoft Cognitive Services: https://www.microsoft.com/cognitive-services/en-us/
+.. _getting started with Text to Speech: https://www.microsoft.com/cognitive-services/en-us/speech-api
